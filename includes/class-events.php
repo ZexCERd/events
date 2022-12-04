@@ -79,6 +79,16 @@ class Events {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
+		/***
+		 * This action is used to register the necessary custom post type over init .
+		 */
+		add_action('init', array( $this, 'register_custom_post_types' ));
+
+		/**
+		 * This action is used to show the post type in the WordPress menu
+		 */
+		add_action('init', array( $this, 'register_custom_taxonomy' ));
+
 	}
 
 	/**
@@ -215,4 +225,88 @@ class Events {
 		return $this->version;
 	}
 
+	/**
+	 * Creates Custom Post Type Events
+	 *
+	 * @since     1.0.0
+	 * @return   null     The version number of the plugin.
+	 */
+	public function register_custom_post_types(){
+		
+		$labels = array(
+			'name'                  => _x( 'Events', 'Post type general name', 'textdomain' ),
+			'singular_name'         => _x( 'Event', 'Post type singular name', 'textdomain' ),
+			'menu_name'             => _x( 'Events', 'Admin Menu text', 'textdomain' ),
+			'name_admin_bar'        => _x( 'Event', 'Add New on Toolbar', 'textdomain' ),
+			'add_new'               => __( 'Add New', 'textdomain' ),
+			'add_new_item'          => __( 'Add New Event', 'textdomain' ),
+			'new_item'              => __( 'New Event', 'textdomain' ),
+			'edit_item'             => __( 'Edit Event', 'textdomain' ),
+			'view_item'             => __( 'View Event', 'textdomain' ),
+			'all_items'             => __( 'All Events', 'textdomain' ),
+			'search_items'          => __( 'Search Events', 'textdomain' ),
+			'parent_item_colon'     => __( 'Parent Events:', 'textdomain' ),
+			'not_found'             => __( 'No Events found.', 'textdomain' ),
+			'not_found_in_trash'    => __( 'No Events found in Trash.', 'textdomain' ),
+			'featured_image'        => _x( 'Event Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'set_featured_image'    => _x( 'Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'remove_featured_image' => _x( 'Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'use_featured_image'    => _x( 'Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'archives'              => _x( 'Event archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'textdomain' ),
+			'insert_into_item'      => _x( 'Insert into event', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'textdomain' ),
+			'uploaded_to_this_item' => _x( 'Uploaded to this event', 'Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4', 'textdomain' ),
+			'filter_items_list'     => _x( 'Filter Events list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'textdomain' ),
+			'items_list_navigation' => _x( 'Events list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'textdomain' ),
+			'items_list'            => _x( 'Events list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'textdomain' ),
+		);
+		$args = array(
+			'labels'             => $labels,
+			'public'             => true,
+			'publicly_queryable' => true,
+			'show_ui'            => true,
+			'show_in_menu'       => true,
+			'show_in_rest'       => true,
+			'query_var'          => true,
+			'rewrite'            => array( 'slug' => 'event' ),
+			'capability_type'    => 'post',
+			'has_archive'        => true,
+			'hierarchical'       => true,
+			'menu_position'      => null,
+			'taxonomies'		 => array( 'post_tag' ),
+			'supports'           => array( 'title' , 'thumbnail', 'custom_fields', 'author', 'revision', 'editor', 'excerpt' ),
+		);
+		register_post_type( 'event', $args );
+	}
+
+	/**
+	 * Creates Custom Taxonomy event_type
+	 *
+	 * @since     1.0.0
+	 * @return    null    The version number of the plugin.
+	 */
+	public function register_custom_taxonomy(){
+		$labels = array(
+			'name'              => _x( 'Event Types', 'taxonomy general name', 'textdomain' ),
+			'singular_name'     => _x( 'Event Type', 'taxonomy singular name', 'textdomain' ),
+			'search_items'      => __( 'Search Event Types', 'textdomain' ),
+			'all_items'         => __( 'All Event Types', 'textdomain' ),
+			'parent_item'       => __( 'Parent Event Type', 'textdomain' ),
+			'parent_item_colon' => __( 'Parent Event Type:', 'textdomain' ),
+			'edit_item'         => __( 'Edit Event Type', 'textdomain' ),
+			'update_item'       => __( 'Update Event Type', 'textdomain' ),
+			'add_new_item'      => __( 'Add New Event Type', 'textdomain' ),
+			'new_item_name'     => __( 'New Event Type Name', 'textdomain' ),
+			'menu_name'         => __( 'Event Type', 'textdomain' ),
+		);
+	
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array( 'slug' => 'event_type' ),
+		);
+		register_taxonomy( 'event_type', array( 'event' ), $args );
+	}
 }
